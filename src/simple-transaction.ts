@@ -9,34 +9,36 @@ import {
   SuiObjectRef,
 } from "@mysten/sui.js"
 
+import { gasCoin1, gasCoin2, obj1, obj2, ObjectCallArg } from "./sui-data/objects"
+
+
+
 async function main() {
 
-// 初始化
-  const secretKey = Buffer.from("0x0");
+  // 初始化
+  const secretKey = Buffer.from('AONOr9SfnOFFGAjHiBPALiWFh+HrtVOh9S/0OGcZOKre', 'base64').slice(1);
   const provider = new JsonRpcProvider(testnetConnection);
   const keyPair = Ed25519Keypair.fromSecretKey(secretKey);
   const signer = new RawSigner(keyPair, provider);
+  const sender = await signer.getAddress();
 
-// 构造交易
-  const obj: SuiObjectRef = { objectId: '', digest: '', version: '' };
-  const tx = Transactions.TransferObjects(
-    [{ kind: 'Input', value: obj, type: 'object', index: 0 }],
-    { kind: 'Input', value: '0x0', index: 0 }
-  );
-  const txBlock = new TransactionBlock();
-  txBlock.add(tx);
+  const transferObj = async(obj: ObjectCallArg, gasCoin: SuiObjectRef) => {
+    const txBlock = new TransactionBlock();
+    txBlock.transferObjects([txBlock.object(obj)], txBlock.pure(sender));
+    txBlock.setGasPayment([gasCoin]);
+    txBlock.setGasPrice(1100);
+    txBlock.setGasBudget(10 ** 7); // 0.01SUI
+    txBlock.setSender(sender);
+    const txBytes = await txBlock.build({ provider, onlyTransactionKind: false });
+    const res = await signer.signAndExecuteTransactionBlock({transactionBlock: txBytes});
+    console.log(res)
+  }
 
-// 设置手续费
-  const gasCoins: SuiObjectRef[] = [
-    {objectId: '', digest: '', version: ''}
-  ];
-  txBlock.setGasPayment(gasCoins);
-  txBlock.setGasPrice(900);
-  txBlock.setGasBudget(10 ** 8); // 0.1SUI
-
-// 序列化交易
-  const txBytes = await txBlock.build();
-
-// 发送交易
-  const res = await signer.signAndExecuteTransactionBlock({transactionBlock: txBytes});
+  const res = await Promise.all([
+    transferObj(obj1, gasCoin1),
+    transferObj(obj2, gasCoin2),
+  ]);
+  return res;
 }
+
+main().then(console.log).catch(console.error);
