@@ -1,4 +1,5 @@
 // 引入sui官方sdk
+import * as dotenv from "dotenv";
 import {
   Transactions,
   TransactionBlock,
@@ -8,20 +9,19 @@ import {
   testnetConnection,
   SuiObjectRef,
   SUI_TYPE_ARG,
-} from "@mysten/sui.js"
-
-import type { ObjectCallArg, PureCallArg } from "@mysten/sui.js"
+} from "@mysten/sui.js";
+dotenv.config();
 
 async function main() {
 
   // 初始化
-  const secretKey = Buffer.from('AONOr9SfnOFFGAjHiBPALiWFh+HrtVOh9S/0OGcZOKre', 'base64').slice(1);
+  const secretKey = process.env.SECRET_KEY as string;
   const provider = new JsonRpcProvider(testnetConnection);
-  const keyPair = Ed25519Keypair.fromSecretKey(secretKey);
+  const keyPair = Ed25519Keypair.fromSecretKey(Buffer.from(secretKey, 'base64').slice(1));
   const signer = new RawSigner(keyPair, provider);
   const sender = await signer.getAddress();
 
-  const StructType = '0x2::coin::Coin<0x96f98f84c2d351fe152eebb3b937897d33bae6ee07ae8f60028dca16952862cd::eth::ETH>';
+  const StructType = `0x2::coin::Coin<${SUI_TYPE_ARG}>`;
   const objs = await provider.getOwnedObjects({
     owner: sender,
     filter: {

@@ -13,9 +13,10 @@
     "@mysten/sui.js": "^0.34.1",
     "@scallop-io/sui-kit": "^0.34.1",
     "@scallop-io/sui-kit-plugins": "^0.34.2",
-    "@scallop-io/sui-package-kit": "^0.33.6"
+    "@scallop-io/sui-package-kit": "^0.34.1"
   },
   "devDependencies": {
+    "dotenv": "^16.0.3",
     "tsconfig-paths": "^4.2.0"
   }
 }

@@ -1,13 +1,13 @@
-// 引入sui官方sdk
+import dotenv from "dotenv";
 import {
-  Transactions,
   TransactionBlock,
   Ed25519Keypair,
   JsonRpcProvider,
   RawSigner,
   testnetConnection,
   SuiObjectRef,
-} from "@mysten/sui.js"
+} from "@mysten/sui.js";
+dotenv.config();
 
 import { gasCoin1, gasCoin2, obj1, obj2, ObjectCallArg } from "./sui-data/objects"
 
@@ -16,11 +16,13 @@ import { gasCoin1, gasCoin2, obj1, obj2, ObjectCallArg } from "./sui-data/object
 async function main() {
 
   // 初始化
-  const secretKey = Buffer.from('AONOr9SfnOFFGAjHiBPALiWFh+HrtVOh9S/0OGcZOKre', 'base64').slice(1);
+  const secretKey = Buffer.from(process.env.SECRET_KEY as string, 'base64').slice(1);
   const provider = new JsonRpcProvider(testnetConnection);
   const keyPair = Ed25519Keypair.fromSecretKey(secretKey);
   const signer = new RawSigner(keyPair, provider);
   const sender = await signer.getAddress();
+  
+  provider.devInspectTransactionBlock({ transactionBlock })
 
   const transferObj = async(obj: ObjectCallArg, gasCoin: SuiObjectRef) => {
     const txBlock = new TransactionBlock();
