@@ -1,0 +1,6 @@
+[config]
+rpc = "https://fullnode.testnet.sui.io:443"
+
+[packages]
+#Counter = { id = "0xb21c3ea988a2bd765a6d02d12539b51fbb91c8f9e78bebf650df827024ae7ef7" }
+CetusClmm = { local = "../../../cetus-clmm-interface/sui/clmmpool" }

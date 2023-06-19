@@ -1,0 +1,6 @@
+[config]
+rpc = "https://fullnode.testnet.sui.io:443"
+
+[packages]
+#DeepBook = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/deepbook", rev = "releases/sui-v1.4.0-release" }
+Defi = { id = "0x2a8098ca847fb0f79c7fa0409f9a8f139fbef93158199a7efba776adf2fd819b" }
